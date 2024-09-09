@@ -1,0 +1,47 @@
+services:
+  
+  db:
+    build:
+      context: ./mysql
+    environment:
+      - MYSQL_DATABASE=waka
+      - MYSQL_ROOT_PASSWORD=26102003
+    ports:
+      - '3307:3306'
+    volumes:
+      - ./mysql/init_db:/docker-entrypoint-initdb.d
+    networks:
+      - pvl
+    
+  api:
+    build:
+      context: ./api
+    ports:
+      - '5000:5000'
+    depends_on:
+      - db
+    networks:
+      - pvl
+
+  crawling:
+    build:
+      context: ./crawling
+    depends_on:
+      - api
+    networks:
+      - pvl
+
+  web:
+    build:
+      context: ./web
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+    networks:
+      - pvl
+
+
+networks:
+    pvl:
+    
